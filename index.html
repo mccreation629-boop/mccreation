@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MC Creation Photobooth</title>
+<style>
+:root{--bg:#f4efe7;--ink:#24211d;--accent:#7a5b45;--card:#fffdf9}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:14px 22px;background:var(--accent);color:white;font-weight:700}
+button.secondary{background:#ded4c8;color:var(--ink)} button:disabled{opacity:.45;cursor:not-allowed}
+.screen{min-height:100vh;display:none;padding:22px;align-items:center;justify-content:center}.screen.active{display:flex}
+.card{width:min(1050px,100%);background:var(--card);border-radius:28px;padding:28px;box-shadow:0 15px 45px #0001;text-align:center}
+h1{margin:0 0 8px;font-size:clamp(30px,6vw,62px)} h2{font-size:clamp(24px,4vw,40px)} p{opacity:.72}
+.start{font-size:clamp(20px,4vw,30px);padding:18px 34px}
+.camera-wrap{position:relative;width:min(850px,100%);margin:auto;overflow:hidden;border-radius:22px;background:#111}
+video{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transform:scaleX(-1)}
+.count{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(90px,20vw,220px);font-weight:900;color:#fff;text-shadow:0 5px 25px #000}
+.controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+#resultImg{max-width:min(430px,90vw);max-height:75vh;box-shadow:0 12px 30px #0002;border-radius:6px}
+.status{margin:12px 0;min-height:24px;font-weight:700}
+.small{font-size:13px}
+@media print{
+  body *{visibility:hidden!important} #resultScreen,#resultScreen *{visibility:visible!important}
+  #resultScreen{display:block!important;position:absolute;left:0;top:0;width:100%;padding:0;background:white}
+  #resultImg{display:block;margin:0 auto;max-width:none;max-height:none;width:6in}
+  .no-print{display:none!important}
+}
+</style>
+</head>
+<body>
+<section id="home" class="screen active">
+  <div class="card">
+    <div class="small">MC CREATION</div>
+    <h1>PHOTOBOOTH</h1>
+    <p>Capture the moment. Make it yours.</p>
+    <button class="start" id="startBtn">START PHOTOBOOTH</button>
+    <p class="small">Prototype v1 • Designed for iPad</p>
+  </div>
+</section>
+
+<section id="cameraScreen" class="screen">
+  <div class="card">
+    <h2>Get Ready!</h2>
+    <div class="camera-wrap">
+      <video id="video" autoplay playsinline muted></video>
+      <div id="count" class="count"></div>
+    </div>
+    <div class="status" id="status">Camera is starting…</div>
+    <div class="controls">
+      <button id="takeBtn">TAKE PHOTO</button>
+      <button class="secondary" id="backBtn">BACK</button>
+    </div>
+    <p class="small">You will take 3 photos. Keep smiling!</p>
+  </div>
+</section>
+
+<section id="resultScreen" class="screen">
+  <div class="card">
+    <h2 class="no-print">YOUR PHOTO IS READY!</h2>
+    <img id="resultImg" alt="Finished photobooth print">
+    <div class="controls no-print">
+      <button id="printBtn">PRINT PHOTO</button>
+      <button class="secondary" id="retakeBtn">TAKE AGAIN</button>
+    </div>
+    <p class="small no-print">Printing uses your browser's print dialog for now. A direct PC printer bridge can be added in the next version.</p>
+  </div>
+</section>
+
+<script>
+const $=id=>document.getElementById(id);
+const screens=[$('home'),$('cameraScreen'),$('resultScreen')];
+const video=$('video'), count=$('count'), status=$('status'), resultImg=$('resultImg');
+let stream=null, photos=[], busy=false;
+
+function show(s){screens.forEach(x=>x.classList.remove('active'));$(s).classList.add('active')}
+async function startCamera(){
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:960}},audio:false});
+    video.srcObject=stream; status.textContent='Camera ready.';
+  }catch(e){
+    status.textContent='Camera access was blocked. Allow Camera permission and reload.';
+    $('takeBtn').disabled=true;
+  }
+}
+function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
+function wait(ms){return new Promise(r=>setTimeout(r,ms))}
+async function countdown(){
+  for(const n of [3,2,1]){
+    count.textContent=n; await wait(700);
+  }
+  count.textContent='📸'; await wait(180); count.textContent='';
+}
+function snap(){
+  const c=document.createElement('canvas'); c.width=video.videoWidth||1280;c.height=video.videoHeight||960;
+  const x=c.getContext('2d'); x.translate(c.width,0);x.scale(-1,1);x.drawImage(video,0,0,c.width,c.height);
+  return c;
+}
+async function take(){
+  if(busy)return; busy=true;$('takeBtn').disabled=true;
+  try{
+    photos=[];
+    for(let i=0;i<3;i++){
+      status.textContent=`Photo ${i+1} of 3`;
+      await countdown(); photos.push(snap());
+      await wait(500);
+    }
+    const final=makePrint();
+    resultImg.src=final.toDataURL('image/jpeg',.95);
+    stopCamera(); show('resultScreen');
+  }finally{busy=false;$('takeBtn').disabled=false}
+}
+function makePrint(){
+  // 2x6-inch portrait strip at 300 DPI
+  const W=600,H=1800, c=document.createElement('canvas');c.width=W;c.height=H;
+  const x=c.getContext('2d');
+  x.fillStyle='#fffdf9';x.fillRect(0,0,W,H);
+  x.fillStyle='#7a5b45';x.fillRect(0,0,W,95);
+  x.fillStyle='#fff';x.font='bold 42px Arial';x.textAlign='center';x.fillText('MC CREATION',W/2,63);
+  const margin=35, gap=22, pw=W-margin*2, ph=390;
+  photos.forEach((p,i)=>{
+    const y=120+i*(ph+gap);
+    x.save();x.beginPath();x.roundRect(margin,y,pw,ph,8);x.clip();
+    const r=Math.max(pw/p.width,ph/p.height), w=p.width*r,h=p.height*r;
+    x.drawImage(p,(W-w)/2,y+(ph-h)/2,w,h);x.restore();
+  });
+  x.fillStyle='#24211d';x.textAlign='center';x.font='bold 30px Arial';x.fillText('CAPTURE THE MOMENT',W/2,1745);
+  x.font='20px Arial';x.fillText(new Date().toLocaleDateString(),W/2,1775);
+  return c;
+}
+$('startBtn').onclick=async()=>{show('cameraScreen');await startCamera()}
+$('takeBtn').onclick=take;
+$('backBtn').onclick=()=>{stopCamera();show('home')}
+$('retakeBtn').onclick=async()=>{show('cameraScreen');await startCamera()}
+$('printBtn').onclick=()=>window.print();
+</script>
+</body>
+</html>
