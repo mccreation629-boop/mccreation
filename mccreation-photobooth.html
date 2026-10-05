@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f8b9d5">
+<title>MC CREATION — Mini Booth</title>
+
+<style>
+:root{
+  --pink:#f39ac2;
+  --pink2:#ffd5e6;
+  --green:#bfe8d1;
+  --green2:#e5f8ed;
+  --purple:#64506f;
+  --dark:#211b25;
+  --white:#fff;
+  --shadow:0 10px 30px rgba(75,45,65,.14);
+  --radius:22px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--purple);
+  background:
+    radial-gradient(circle at 10% 10%,#fff 0 35px,transparent 36px),
+    linear-gradient(135deg,#ffe8f1,#e9faef 55%,#fff1f8);
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+.app{
+  width:min(1180px,100%);
+  margin:auto;
+  padding:16px;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 4px 16px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--pink),var(--green));
+  display:grid;
+  place-items:center;
+  font-size:25px;
+  box-shadow:var(--shadow);
+}
+
+.brand h1{
+  margin:0;
+  font-size:21px;
+  letter-spacing:1px;
+}
+
+.brand small{
+  display:block;
+  opacity:.7;
+  margin-top:3px;
+}
+
+.lang{
+  background:#fff;
+  color:var(--purple);
+  padding:9px 13px;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  font-weight:bold;
+}
+
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block}
+
+.hero{
+  text-align:center;
+  padding:18px 0 8px;
+}
+
+.hero h2{
+  margin:8px 0;
+  font-size:clamp(25px,5vw,43px);
+}
+
+.hero p{
+  margin:0 auto 20px;
+  max-width:650px;
+  opacity:.75;
+}
+
+.primary{
+  background:linear-gradient(135deg,#ec68a5,#f59fc5);
+  color:white;
+  padding:15px 34px;
+  border-radius:18px;
+  font-size:19px;
+  font-weight:800;
+  box-shadow:0 8px 20px rgba(226,83,145,.28);
+}
+
+.primary:active,
+.small-btn:active,
+.template:active{
+  transform:scale(.97);
+}
+
+/* MODE */
+.mode-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:18px;
+}
+
+.mode{
+  background:#fff;
+  padding:17px 10px;
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  color:var(--purple);
+  font-weight:800;
+}
+
+.mode span{
+  display:block;
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+/* TEMPLATE SCREEN */
+.title{
+  text-align:center;
+  margin:8px 0 15px;
+}
+
+.title h2{
+  margin:0 0 5px;
+  font-size:clamp(24px,5vw,34px);
+}
+
+.title p{
+  margin:0;
+  opacity:.7;
+}
+
+.template-tools{
+  display:flex;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.search{
+  flex:1;
+  border:2px solid #fff;
+  background:#fff;
+  border-radius:15px;
+  padding:11px 13px;
+  outline:none;
+  color:var(--purple);
+  box-shadow:var(--shadow);
+}
+
+.category{
+  border:0;
+  border-radius:15px;
+  background:#fff;
+  color:var(--purple);
+  padding:0 11px;
+  box-shadow:var(--shadow);
+}
+
+.template-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+}
+
+.template{
+  background:#fff;
+  border:3px solid transparent;
+  border-radius:20px;
+  padding:8px;
+  box-shadow:var(--shadow);
+  text-align:left;
+  color:var(--purple);
+  transition:.15s;
+}
+
+.template.selected{
+  border-color:#ed66a5;
+  box-shadow:0 0 0 4px rgba(237,102,165,.14);
+}
+
+.template-preview{
+  aspect-ratio:2/3;
+  border-radius:14px;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  overflow:hidden;
+}
+
+.slot{
+  flex:1;
+  border-radius:7px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.35));
+  border:1px solid rgba(80,60,80,.1);
+}
+
+.template-name{
+  display:block;
+  padding:8px 3px 3px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.template-style{
+  display:block;
+  padding:0 3px 4px;
+  font-size:10px;
+  opacity:.6;
+}
+
+.pink{background:linear-gradient(160deg,#ffd6e7,#f59fc4)}
+.green{background:linear-gradient(160deg,#d9f6e5,#9eddbd)}
+.retro{background:linear-gradient(160deg,#f5d09c,#c98667)}
+.y2k{background:linear-gradient(160deg,#cce9ff,#d6b9f3)}
+.dark{background:linear-gradient(160deg,#29222e,#79647d)}
+.floral{background:linear-gradient(160deg,#fbd5dd,#e5c4ee)}
+.yellow{background:linear-gradient(160deg,#fff0a8,#ffd28c)}
+.blue{background:linear-gradient(160deg,#c8eaff,#a9c9ef)}
+.red{background:linear-gradient(160deg,#ffd0d0,#ef9eaa)}
+.minimal{background:linear-gradient(160deg,#f7f4ef,#ddd8d0)}
+
+.template-bottom{
+  position:sticky;
+  bottom:8px;
+  margin-top:15px;
+  display:flex;
+  justify-content:center;
+}
+
+/* CAMERA */
+.camera-layout{
+  max-width:900px;
+  margin:auto;
+}
+
+.camera-card{
+  background:#201a23;
+  border-radius:25px;
+  padding:10px;
+  box-shadow:var(--shadow);
+}
+
+.camera-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/10;
+  min-height:260px;
+  max-height:68vh;
+  background:#08070a;
+  border-radius:18px;
+  overflow:hidden;
+}
+
+video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transform:scaleX(1);
+}
+
+video.mirrored{
+  transform:scaleX(-1);
+}
+
+.countdown{
+  position:absolute;
+  inset:0;
+  display:none;
+  place-items:center;
+  color:#fff;
+  font-size:clamp(70px,15vw,150px);
+  font-weight:900;
+  text-shadow:0 5px 25px #000;
+  background:rgba(0,0,0,.12);
+}
+
+.countdown.show{
+  display:grid;
+}
+
+.flash{
+  position:absolute;
+  inset:0;
+  background:#fff;
+  opacity:0;
+  pointer-events:none;
+}
+
+.flash.on{
+  animation:flash .35s;
+}
+
+@keyframes flash{
+  0%{opacity:0}
+  30%{opacity:.9}
+  100%{opacity:0}
+}
+
+.camera-info{
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 3px 3px;
+  font-size:12px;
+}
+
+.camera-controls{
+  display:grid;
+  grid-template-columns:1.25fr 1fr 1fr 1fr;
+  gap:7px;
+  margin-top:7px;
+}
+
+.small-btn{
+  min-height:42px;
+  padding:8px 9px;
+  border-radius:13px;
+  background:#fff;
+  color:var(--purple);
+  font-size:12px;
+  font-weight:800;
+}
+
+.take{
+  background:#ea62a0;
+  color:#fff;
+  font-size:14px;
+}
+
+.control-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:7px;
+  margin-top:7px;
+}
+
+.select-small{
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:9px;
+  background:#fff;
+  color:var(--purple);
+  font-weight:bold;
+  font-size:12px;
+}
+
+.camera-extra{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:7px;
+  margin-top:7px;
+}
+
+.photo-count{
+  color:#fff;
+  text-align:center;
+  font-size:12px;
+  padding:7px;
+}
+
+/* PHOTO STRIP */
+.result-card{
+  background:#fff;
+  border-radius:24px;
+  padding:16px;
+  box-shadow:var(--shadow);
+  max-width:650px;
+  margin:auto;
+}
+
+.result-preview{
+  display:flex;
+  justify-content:center;
+  padding:10px;
+}
+
+.canvas-wrap{
+  width:min(100%,430px);
+  background:#fff;
+  padding:12px;
+  box-shadow:0 8px 25px rgba(0,0,0,.12);
+}
+
+#resultCanvas{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+.result-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:12px;
+}
+
+.result-actions button{
+  padding:12px;
+  border-radius:14px;
+  font-weight:800;
+  color:var(--purple);
+  background:var(--green2);
+}
+
+.result-actions .pink-btn{
+  background:var(--pink);
+  color:#fff;
+}
+
+/* BACK */
+.back{
+  background:transparent;
+  color:var(--purple);
+  font-weight:800;
+  padding:8px 0;
+  margin-bottom:3px;
+}
+
+/* STICKERS */
+.decor{
+  position:fixed;
+  pointer-events:none;
+  opacity:.55;
+  z-index:-1;
+  font-size:25px;
+}
+
+.d1{top:12%;left:3%}
+.d2{top:27%;right:4%}
+.d3{bottom:12%;left:5%}
+.d4{bottom:25%;right:4%}
+
+/* MOBILE */
+@media(max-width:850px){
+  .template-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .mode-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:600px){
+  .app{
+    padding:10px;
+  }
+
+  .header{
+    padding-bottom:9px;
+  }
+
+  .logo{
+    width:43px;
+    height:43px;
+    font-size:20px;
+  }
+
+  .brand h1{
+    font-size:17px;
+  }
+
+  .hero{
+    padding-top:10px;
+  }
+
+  .hero h2{
+    font-size:27px;
+  }
+
+  .hero p{
+    font-size:13px;
+    margin-bottom:14px;
+  }
+
+  .primary{
+    padding:12px 27px;
+    font-size:17px;
+  }
+
+  .template-tools{
+    position:sticky;
+    top:0;
+    z-index:5;
+    padding:5px 0;
+  }
+
+  .template-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+  }
+
+  .template{
+    border-radius:15px;
+    padding:5px;
+  }
+
+  .template-preview{
+    border-radius:10px;
+    padding:5px;
+    gap:3px;
+  }
+
+  .template-name{
+    font-size:11px;
+    padding-top:6px;
+  }
+
+  .template-style{
+    font-size:8px;
+  }
+
+  .camera-card{
+    padding:7px;
+    border-radius:19px;
+  }
+
+  .camera-wrap{
+    aspect-ratio:4/3;
+    min-height:0;
+    max-height:none;
+  }
+
+  .camera-controls{
+    grid-template-columns:1.25fr 1fr 1fr;
+    gap:5px;
+  }
+
+  .small-btn{
+    min-height:38px;
+    padding:6px 5px;
+    border-radius:11px;
+    font-size:10px;
+  }
+
+  .take{
+    font-size:12px;
+  }
+
+  .camera-controls .small-btn:last-child{
+    display:none;
+  }
+
+  .control-row,
+  .camera-extra{
+    gap:5px;
+  }
+
+  .select-small{
+    padding:8px 4px;
+    font-size:10px;
+  }
+
+  .photo-count{
+    padding:5px;
+    font-size:10px;
+  }
+}
+
+@media(max-width:390px){
+  .template-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .camera-wrap{
+    aspect-ratio:4/3;
+  }
+
+  .brand small{
+    display:none;
+  }
+}
+
+/* PRINT */
+@media print{
+  body{
+    background:white;
+  }
+
+  body *{
+    visibility:hidden;
+  }
+
+  #printArea,
+  #printArea *{
+    visibility:visible;
+  }
+
+  #printArea{
+    position:absolute;
+    left:0;
+    top:0;
+    width:4in;
+    height:6in;
+    margin:0;
+  }
+
+  @page{
+    size:4in 6in;
+    margin:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="decor d1">♡</div>
+<div class="decor d2">✦</div>
+<div class="decor d3">🌸</div>
+<div class="decor d4">♡</div>
+
+<div class="app">
+
+<header class="header">
+  <div class="brand">
+    <div class="logo">📸</div>
+    <div>
+      <h1>MC CREATION</h1>
+      <small>Mini Photobooth</small>
+    </div>
+  </div>
+
+  <button class="lang" onclick="toggleLang()">FIL</button>
+</header>
+
+
+<!-- HOME -->
+<section id="home" class="screen active">
+
+  <div class="hero">
+    <h2 id="hello">HELLO! MC CREATION IS HERE 💗</h2>
+    <p id="tagline">KEEP SMILING • MAKE MEMORIES • HAVE FUN</p>
+
+    <button class="primary" onclick="showModes()">
+      START ✨
+    </button>
+  </div>
+
+</section>
+
+
+<!-- MODE -->
+<section id="modes" class="screen">
+
+  <button class="back" onclick="showScreen('home')">← Back</button>
+
+  <div class="title">
+    <h2>Choose Your Mode</h2>
+    <p>Pick the vibe for your photo session.</p>
+  </div>
+
+  <div class="mode-grid">
+
+    <button class="mode" onclick="chooseMode('Solo')">
+      <span>🧍</span>
+      Solo
+    </button>
+
+    <button class="mode" onclick="chooseMode('Couple')">
+      <span>💗</span>
+      Couple
+    </button>
+
+    <button class="mode" onclick="chooseMode('Besties')">
+      <span>👯</span>
+      Besties
+    </button>
+
+    <button class="mode" onclick="chooseMode('Party')">
+      <span>🎉</span>
+      Party
+    </button>
+
+    <button class="mode" onclick="chooseMode('Surprise')">
+      <span>🎲</span>
+      Surprise Me
+    </button>
+
+    <button class="mode" onclick="chooseMode('Birthday')">
+      <span>🎂</span>
+      Birthday
+    </button>
+
+    <button class="mode" onclick="chooseMode('School')">
+      <span>🎓</span>
+      School
+    </button>
+
+    <button class="mode" onclick="chooseMode('Wedding')">
+      <span>💍</span>
+      Wedding
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- TEMPLATES -->
+<section id="templates" class="screen">
+
+  <button class="back" onclick="showScreen('modes')">← Back</button>
+
+  <div class="title">
+    <h2>Choose Your Template 🎀</h2>
+    <p id="modeText">Choose a design before opening the camera.</p>
+  </div>
+
+  <div class="template-tools">
+    <input
+      id="templateSearch"
+      class="search"
+      placeholder="🔎 Search templates..."
+      oninput="filterTemplates()"
+    >
+
+    <select id="category" class="category" onchange="filterTemplates()">
+      <option value="ALL">ALL</option>
+      <option value="Kawaii">Kawaii</option>
+      <option value="Retro">Retro</option>
+      <option value="Coquette">Coquette</option>
+      <option value="Y2K">Y2K</option>
+      <option value="Floral">Floral</option>
+      <option value="Minimal">Minimal</option>
+      <option value="Birthday">Birthday</option>
+      <option value="Couple">Couple</option>
+      <option value="Besties">Besties</option>
+    </select>
+  </div>
+
+  <div id="templateGrid" class="template-grid"></div>
+
+  <div class="template-bottom">
+    <button class="primary" onclick="startCamera()">
+      CONTINUE TO CAMERA 📸
+    </button>
+  </div>
+
+</section>
+
+
+<!-- CAMERA -->
+<section id="camera" class="screen">
+
+  <button class="back" onclick="showScreen('templates');stopCamera()">
+    ← Change Template
+  </button>
+
+  <div class="camera-layout">
+
+    <div class="camera-card">
+
+      <div class="camera-wrap">
+
+        <video id="video" autoplay playsinline muted></video>
+
+        <div id="countdown" class="countdown">3</div>
+
+        <div id="flash" class="flash"></div>
+
+      </div>
+
+      <div class="camera-info">
+        <span id="selectedTemplateLabel">Template</span>
+        <span id="photoCounter">0 / 6 photos</span>
+      </div>
+
+      <div class="camera-controls">
+
+        <button class="small-btn take" onclick="takePhoto()">
+          📸 TAKE PHOTO
+        </button>
+
+        <button class="small-btn" onclick="toggleCamera()">
+          🎥 CAMERA
+        </button>
+
+        <button class="small-btn" onclick="toggleMirror()">
+          ↔ MIRROR
+        </button>
+
+        <button class="small-btn" onclick="toggleFlash()">
+          ⚡ FLASH
+        </button>
+
+      </div>
+
+      <div class="control-row">
+
+        <select id="timer" class="select-small">
+          <option value="3">⏱ 3 seconds</option>
+          <option value="5">⏱ 5 seconds</option>
+          <option value="10">⏱ 10 seconds</option>
+        </select>
+
+        <select id="photoNumber" class="select-small">
+          <option value="4">4 photos</option>
+          <option value="6" selected>6 photos</option>
+        </select>
+
+        <button class="small-btn" onclick="uploadPhotos()">
+          📁 UPLOAD
+        </button>
+
+      </div>
+
+      <div class="camera-extra">
+
+        <button class="small-btn" onclick="randomFilter()">
+          ✨ FILTER
+        </button>
+
+        <button class="small-btn" onclick="poseRoulette()">
+          🎰 POSE
+        </button>
+
+        <button class="small-btn" onclick="toggleMusic()">
+          🔊 MUSIC
+        </button>
+
+      </div>
+
+      <div class="photo-count" id="poseText">
+        Ready? Smile! 💗
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- RESULT -->
+<section id="result" class="screen">
+
+  <button class="back" onclick="showScreen('camera')">
+    ← Back to Camera
+  </button>
+
+  <div class="title">
+    <h2>Your Photo Strip ✨</h2>
+    <p>Preview your memories.</p>
+  </div>
+
+  <div class="result-card">
+
+    <div class="result-preview" id="printArea">
+      <div class="canvas-wrap">
+        <canvas id="resultCanvas" width="1200" height="1800"></canvas>
+      </div>
+    </div>
+
+    <div class="result-actions">
+
+      <button class="pink-btn" onclick="downloadPNG()">
+        🖼️ DOWNLOAD PNG
+      </button>
+
+      <button onclick="printPhoto()">
+        🖨️ PRINT / SAVE PDF
+      </button>
+
+      <button onclick="retakeLast()">
+        🔄 RETAKE LAST
+      </button>
+
+      <button onclick="startOver()">
+        ✨ NEW SESSION
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<input
+  id="fileInput"
+  type="file"
+  accept="image/*"
+  multiple
+  hidden
+  onchange="handleUploads(event)"
+>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+const templates = [
+
+  {name:"Pink Kawaii",cat:"Kawaii",style:"pink"},
+  {name:"Sweet Hearts",cat:"Kawaii",style:"pink"},
+  {name:"Pastel Dream",cat:"Kawaii",style:"green"},
+  {name:"Cute Cherry",cat:"Kawaii",style:"pink"},
+
+  {name:"Retro Film",cat:"Retro",style:"retro"},
+  {name:"Retro Flash",cat:"Retro",style:"yellow"},
+  {name:"Vintage Booth",cat:"Retro",style:"retro"},
+
+  {name:"Coquette Bow",cat:"Coquette",style:"pink"},
+  {name:"Soft Coquette",cat:"Coquette",style:"floral"},
+  {name:"Ribbon Love",cat:"Coquette",style:"pink"},
+
+  {name:"Y2K Bubble",cat:"Y2K",style:"y2k"},
+  {name:"Y2K Star",cat:"Y2K",style:"blue"},
+  {name:"Cyber Pink",cat:"Y2K",style:"y2k"},
+
+  {name:"Garden Flowers",cat:"Floral",style:"floral"},
+  {name:"Spring Bloom",cat:"Floral",style:"green"},
+  {name:"Rose Garden",cat:"Floral",style:"pink"},
+
+  {name:"Clean White",cat:"Minimal",style:"minimal"},
+  {name:"Simple Film",cat:"Minimal",style:"minimal"},
+  {name:"Modern Black",cat:"Minimal",style:"dark"},
+
+  {name:"Birthday Pink",cat:"Birthday",style:"pink"},
+  {name:"Birthday Party",cat:"Birthday",style:"yellow"},
+  {name:"Birthday Cake",cat:"Birthday",style:"pink"},
+
+  {name:"Couple Love",cat:"Couple",style:"red"},
+  {name:"Forever Us",cat:"Couple",style:"pink"},
+  {name:"Love Story",cat:"Couple",style:"floral"},
+
+  {name:"Bestie Pink",cat:"Besties",style:"pink"},
+  {name:"Best Friends",cat:"Besties",style:"green"},
+  {name:"BFF Film",cat:"Besties",style:"y2k"}
+
+];
+
+let selectedTemplate = templates[0];
+let selectedMode = "Solo";
+let photos = [];
+let stream = null;
+let mirrored = false;
+let flashEnabled = false;
+let currentCamera = "user";
+let filterValue = "none";
+let musicOn = false;
+let filipino = false;
+
+
+/* =========================
+   SCREEN
+========================= */
+
+function showScreen(id){
+
+  document.querySelectorAll(".screen").forEach(s=>{
+    s.classList.remove("active");
+  });
+
+  document.getElementById(id).classList.add("active");
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+
+/* =========================
+   HOME / MODE
+========================= */
+
+function showModes(){
+  showScreen("modes");
+}
+
+function chooseMode(mode){
+
+  selectedMode = mode;
+
+  document.getElementById("modeText").textContent =
+    mode + " mode • Choose a template before taking photos.";
+
+  showScreen("templates");
+}
+
+
+/* =========================
+   TEMPLATES
+========================= */
+
+function renderTemplates(list=templates){
+
+  const grid = document.getElementById("templateGrid");
+
+  grid.innerHTML = "";
+
+  list.forEach((t,index)=>{
+
+    const button = document.createElement("button");
+
+    button.className =
+      "template" +
+      (selectedTemplate === t ? " selected" : "");
+
+    button.innerHTML = `
+
+      <div class="template-preview ${t.style}">
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+        <div class="slot"></div>
+      </div>
+
+      <span class="template-name">${t.name}</span>
+      <span class="template-style">${t.cat}</span>
+    `;
+
+    button.onclick = ()=>{
+
+      selectedTemplate = t;
+
+      renderTemplates(
+        document.querySelectorAll(".template").length
+          ? getFilteredTemplates()
+          : templates
+      );
+
+    };
+
+    grid.appendChild(button);
+
+  });
+
+}
+
+function getFilteredTemplates(){
+
+  const search =
+    document.getElementById("templateSearch").value
+    .toLowerCase();
+
+  const cat =
+    document.getElementById("category").value;
+
+  return templates.filter(t=>{
+
+    const matchesSearch =
+      t.name.toLowerCase().includes(search) ||
+      t.cat.toLowerCase().includes(search);
+
+    const matchesCat =
+      cat==="ALL" || t.cat===cat;
+
+    return matchesSearch && matchesCat;
+
+  });
+}
+
+function filterTemplates(){
+  renderTemplates(getFilteredTemplates());
+}
+
+
+/* =========================
+   CAMERA
+========================= */
+
+async function startCamera(){
+
+  showScreen("camera");
+
+  document.getElementById("selectedTemplateLabel").textContent =
+    selectedTemplate.name;
+
+  try{
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:currentCamera,
+        width:{ideal:1280},
+        height:{ideal:960}
+      },
+      audio:false
+    });
+
+    document.getElementById("video").srcObject = stream;
+
+  }catch(error){
+
+    alert(
+      "Camera access is not available. Please allow camera permission or use UPLOAD to select photos."
+    );
+
+  }
+
+}
+
+function stopCamera(){
+
+  if(stream){
+
+    stream.getTracks().forEach(track=>track.stop());
+
+    stream=null;
+
+  }
+
+}
+
+async function toggleCamera(){
+
+  currentCamera =
+    currentCamera==="user"
+    ? "environment"
+    : "user";
+
+  stopCamera();
+
+  await startCamera();
+
+}
+
+function toggleMirror(){
+
+  mirrored=!mirrored;
+
+  document
+    .getElementById("video")
+    .classList.toggle("mirrored",mirrored);
+
+}
+
+function toggleFlash(){
+
+  flashEnabled=!flashEnabled;
+
+  alert(
+    flashEnabled
+    ? "Flash effect ON"
+    : "Flash effect OFF"
+  );
+
+}
+
+
+/* =========================
+   TAKE PHOTO
+========================= */
+
+async function takePhoto(){
+
+  const max =
+    Number(document.getElementById("photoNumber").value);
+
+  if(photos.length>=max){
+
+    finishSession();
+
+    return;
+
+  }
+
+  const seconds =
+    Number(document.getElementById("timer").value);
+
+  await countdown(seconds);
+
+  const video =
+    document.getElementById("video");
+
+  if(!video.videoWidth){
+
+    alert("Camera is not ready yet.");
+
+    return;
+
+  }
+
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width=video.videoWidth;
+  canvas.height=video.videoHeight;
+
+  const ctx=canvas.getContext("2d");
+
+  if(mirrored){
+
+    ctx.translate(canvas.width,0);
+    ctx.scale(-1,1);
+
+  }
+
+  ctx.filter=filterValue;
+
+  ctx.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  photos.push(canvas.toDataURL("image/jpeg",.92));
+
+  updatePhotoCounter();
+
+  if(flashEnabled){
+
+    const f=document.getElementById("flash");
+
+    f.classList.remove("on");
+
+    void f.offsetWidth;
+
+    f.classList.add("on");
+
+  }
+
+  if(photos.length>=max){
+
+    setTimeout(finishSession,500);
+
+  }
+
+}
+
+function countdown(seconds){
+
+  return new Promise(resolve=>{
+
+    const el=document.getElementById("countdown");
+
+    el.classList.add("show");
+
+    let n=seconds;
+
+    el.textContent=n;
+
+    const timer=setInterval(()=>{
+
+      n--;
+
+      if(n<=0){
+
+        clearInterval(timer);
+
+        el.textContent="📸";
+
+        setTimeout(()=>{
+
+          el.classList.remove("show");
+
+          resolve();
+
+        },250);
+
+      }else{
+
+        el.textContent=n;
+
+      }
+
+    },1000);
+
+  });
+
+}
+
+function updatePhotoCounter(){
+
+  const max =
+    Number(document.getElementById("photoNumber").value);
+
+  document.getElementById("photoCounter").textContent =
+    photos.length+" / "+max+" photos";
+
+}
+
+
+/* =========================
+   UPLOAD
+========================= */
+
+function uploadPhotos(){
+
+  document.getElementById("fileInput").click();
+
+}
+
+function handleUploads(event){
+
+  const files =
+    Array.from(event.target.files);
+
+  const max =
+    Number(document.getElementById("photoNumber").value);
+
+  const remaining =
+    max-photos.length;
+
+  files.slice(0,remaining).forEach(file=>{
+
+    const reader=new FileReader();
+
+    reader.onload=e=>{
+
+      photos.push(e.target.result);
+
+      updatePhotoCounter();
+
+      if(photos.length>=max){
+
+        finishSession();
+
+      }
+
+    };
+
+    reader.readAsDataURL(file);
+
+  });
+
+  event.target.value="";
+
+}
+
+
+/* =========================
+   FILTER
+========================= */
+
+const filters=[
+  "none",
+  "brightness(1.08) saturate(1.15)",
+  "sepia(.3) saturate(1.2)",
+  "contrast(1.12) saturate(1.2)",
+  "grayscale(.25)",
+  "hue-rotate(12deg) saturate(1.15)"
+];
+
+function randomFilter(){
+
+  filterValue =
+    filters[Math.floor(Math.random()*filters.length)];
+
+  document.getElementById("poseText").textContent =
+    "✨ Filter selected!";
+
+}
+
+
+/* =========================
+   POSE
+========================= */
+
+const poses={
+
+  Solo:[
+    "Smile! ✨",
+    "Peace sign! ✌️",
+    "Cute cheek pose! 💗",
+    "Look to the side! 🌸",
+    "Big smile! 😄"
+  ],
+
+  Couple:[
+    "Look at each other! 💕",
+    "Heart pose! 💗",
+    "Cute selfie pose! ✨",
+    "Cheek-to-cheek! 🥰"
+  ],
+
+  Besties:[
+    "Bestie hug! 👯",
+    "Matching peace signs! ✌️",
+    "Funny faces! 😂",
+    "Make a heart! 💗"
+  ],
+
+  Party:[
+    "Everyone smile! 🎉",
+    "Big celebration pose! 🥳",
+    "Fun faces! ✨"
+  ]
+
+};
+
+function poseRoulette(){
+
+  const list =
+    poses[selectedMode] || poses.Party;
+
+  const text =
+    list[Math.floor(Math.random()*list.length)];
+
+  document.getElementById("poseText").textContent =
+    "🎰 "+text;
+
+}
+
+
+/* =========================
+   MUSIC
+========================= */
+
+let audioCtx=null;
+
+function toggleMusic(){
+
+  musicOn=!musicOn;
+
+  if(musicOn){
+
+    try{
+
+      audioCtx =
+        audioCtx ||
+        new (window.AudioContext || window.webkitAudioContext)();
+
+      beep();
+
+      document.getElementById("poseText").textContent =
+        "🔊 Cute booth sounds ON";
+
+    }catch(e){}
+
+  }else{
+
+    document.getElementById("poseText").textContent =
+      "🔇 Booth sounds OFF";
+
+  }
+
+}
+
+function beep(){
+
+  if(!audioCtx)return;
+
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+
+  osc.frequency.value=660;
+
+  gain.gain.setValueAtTime(
+    .08,
+    audioCtx.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    audioCtx.currentTime+.25
+  );
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime+.25);
+
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+function finishSession(){
+
+  stopCamera();
+
+  drawResult();
+
+  showScreen("result");
+
+}
+
+function drawResult(){
+
+  const canvas =
+    document.getElementById("resultCanvas");
+
+  const ctx =
+    canvas.getContext("2d");
+
+  const W=1200;
+  const H=1800;
+
+  canvas.width=W;
+  canvas.height=H;
+
+  /* background */
+
+  const bg=ctx.createLinearGradient(
+    0,0,W,H
+  );
+
+  bg.addColorStop(
+    0,
+    selectedTemplate.style==="green"
+      ? "#dff7e9"
+      : "#ffd8e8"
+  );
+
+  bg.addColorStop(1,"#fff");
+
+  ctx.fillStyle=bg;
+
+  ctx.fillRect(0,0,W,H);
+
+  /* title */
+
+  ctx.fillStyle="#624f6d";
+  ctx.textAlign="center";
+  ctx.font="bold 62px Arial";
+
+  ctx.fillText(
+    "MC CREATION",
+    W/2,
+    80
+  );
+
+  const margin=85;
+  const gap=20;
+  const top=115;
+  const bottom=100;
+
+  const available =
+    H-top-bottom-gap*(photos.length-1);
+
+  const photoH =
+    Math.max(150,available/photos.length);
+
+  let loaded=0;
+
+  photos.forEach((src,i)=>{
+
+    const img=new Image();
+
+    img.onload=()=>{
+
+      const y=
+        top+i*(photoH+gap);
+
+      drawCover(
+        ctx,
+        img,
+        margin,
+        y,
+        W-margin*2,
+        photoH
+      );
+
+      loaded++;
+
+      if(loaded===photos.length){
+
+        drawFooter(ctx);
+
+      }
+
+    };
+
+    img.src=src;
+
+  });
+
+}
+
+function drawCover(ctx,img,x,y,w,h){
+
+  const ratio=
+    Math.max(
+      w/img.width,
+      h/img.height
+    );
+
+  const nw=img.width*ratio;
+  const nh=img.height*ratio;
+
+  const sx=(nw-w)/2;
+  const sy=(nh-h)/2;
+
+  ctx.save();
+
+  ctx.beginPath();
+
+  roundRect(
+    ctx,
+    x,
+    y,
+    w,
+    h,
+    25
+  );
+
+  ctx.clip();
+
+  ctx.drawImage(
+    img,
+    x-sx,
+    y-sy,
+    nw,
+    nh
+  );
+
+  ctx.restore();
+
+}
+
+function drawFooter(ctx){
+
+  ctx.fillStyle="#705b78";
+  ctx.textAlign="center";
+  ctx.font="bold 34px Arial";
+
+  ctx.fillText(
+    "@MC CREATION",
+    600,
+    1760
+  );
+
+}
+
+function roundRect(ctx,x,y,w,h,r){
+
+  ctx.beginPath();
+
+  ctx.moveTo(x+r,y);
+
+  ctx.arcTo(
+    x+w,y,
+    x+w,y+h,
+    r
+  );
+
+  ctx.arcTo(
+    x+w,y+h,
+    x,y+h,
+    r
+  );
+
+  ctx.arcTo(
+    x,y+h,
+    x,y,
+    r
+  );
+
+  ctx.arcTo(
+    x,y,
+    x+w,y,
+    r
+  );
+
+  ctx.closePath();
+
+}
+
+
+/* =========================
+   DOWNLOAD
+========================= */
+
+function downloadPNG(){
+
+  const canvas=
+    document.getElementById("resultCanvas");
+
+  const link=
+    document.createElement("a");
+
+  link.download=
+    "MC-CREATION-photo-strip.png";
+
+  link.href=
+    canvas.toDataURL("image/png");
+
+  link.click();
+
+}
+
+function printPhoto(){
+
+  window.print();
+
+}
+
+
+/* =========================
+   RETAKE
+========================= */
+
+function retakeLast(){
+
+  if(photos.length){
+
+    photos.pop();
+
+    updatePhotoCounter();
+
+  }
+
+  showScreen("camera");
+
+  startCamera();
+
+}
+
+function startOver(){
+
+  photos=[];
+
+  updatePhotoCounter();
+
+  showScreen("modes");
+
+}
+
+
+/* =========================
+   LANGUAGE
+========================= */
+
+function toggleLang(){
+
+  filipino=!filipino;
+
+  if(filipino){
+
+    document.getElementById("hello").textContent =
+      "HELLO! NARITO ANG MC CREATION 💗";
+
+    document.getElementById("tagline").textContent =
+      "NGUMITI • GUMAWA NG ALAALA • MAG-ENJOY";
+
+    document.querySelector(".lang").textContent="ENG";
+
+  }else{
+
+    document.getElementById("hello").textContent =
+      "HELLO! MC CREATION IS HERE 💗";
+
+    document.getElementById("tagline").textContent =
+      "KEEP SMILING • MAKE MEMORIES • HAVE FUN";
+
+    document.querySelector(".lang").textContent="FIL";
+
+  }
+
+}
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+renderTemplates();
+
+updatePhotoCounter();
+
+window.addEventListener("beforeunload",stopCamera);
+
+</script>
+
+</body>
+</html>
